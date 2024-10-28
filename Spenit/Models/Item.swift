@@ -1,18 +1,18 @@
 //
-//  Item.swift
+//  Data.swift
 //  Spenit
 //
 //  Created by Yan :) on 28/10/2024.
 //
 
-import Foundation
 import SwiftData
+import Foundation
 
 @Model
-final class Item {
+class Item {
     var timestamp: Date
     
-    init(timestamp: Date) {
+    init(timestamp: Date = .now) {
         self.timestamp = timestamp
     }
 }
