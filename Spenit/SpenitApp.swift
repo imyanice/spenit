@@ -26,8 +26,17 @@ struct SpenitApp: App {
     
     var body: some Scene {
         WindowGroup {
-            Text("")
             TabView() {
+                
+                NavigationStack() {
+                    OverviewView()
+                        .navigationTitle("Overview")
+                }
+                .tabItem {
+                    Label("Overview", systemImage: "eye")
+                }
+                .tag(0)
+                
                         NavigationStack() {
                             AddTransactionView()
                                 .navigationTitle("Add")
@@ -37,7 +46,7 @@ struct SpenitApp: App {
                             Image(systemName: "plus.app")
                                 .renderingMode(.template)
                         }
-                        .tag(0)
+                        .tag(1)
                         
                         NavigationStack() {
                             ListTransactionView()
@@ -46,7 +55,7 @@ struct SpenitApp: App {
                         .tabItem {
                             Label("List", systemImage: "list.bullet")
                         }
-                        .tag(1)
+                        .tag(2)
 
                     }
         }

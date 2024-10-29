@@ -4,9 +4,9 @@ import SwiftUI
 struct ListTransactionView: View {
     @Query var transactions: [Transaction]
     @Environment(\.modelContext) var modelContext
-    @State private var transactionSheetItem: Transaction? = nil
-
+    
     var body: some View {
+        
         let groupedTransactions = groupTransactionsByWeek(
             transactions: transactions.sorted { $0.date > $1.date })
         List {
@@ -15,7 +15,7 @@ struct ListTransactionView: View {
                 Section() {
                     ForEach(weekTransactions, id: \.self) { transaction in
                         @State var showSheet: Bool = false
-
+                        
                         NavigationLink{ EditTransactionView(transaction: transaction)} label: {
                             HStack {
                                 VStack(alignment: .leading) {
@@ -24,13 +24,13 @@ struct ListTransactionView: View {
                                         Text(transaction.label)
                                             .font(.headline)
                                     }
-                                    Text(transaction.date.formatted())
+                                    Text(dateFormatter.string(from: transaction.date))
                                         .font(.subheadline)
                                         .foregroundStyle(.secondary)
                                 }
-
+                                
                                 Spacer()
-
+                                
                                 VStack(alignment: .trailing) {
                                     Text(
                                         "\(transaction.type == .expense ? "-" : "+") \(transaction.amount.formatted(.currency(code: "EUR")))"
@@ -39,18 +39,18 @@ struct ListTransactionView: View {
                                     .fontWeight(.bold)
                                     .foregroundStyle(
                                         transaction.type == .expense
-                                            ? .red : .green
+                                        ? .red : .green
                                     )
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 2)
                                 }
                             }
                         }
-                    
+                        
                     }
                 }
             }
-
+            
         }
         .overlay(
             alignment: .center,
@@ -75,14 +75,14 @@ struct ListTransactionView: View {
             }
         })
     }
-
+    
     private func groupTransactionsByWeek(transactions: [Transaction])
-        -> [[Transaction]]
+    -> [[Transaction]]
     {
         var groupedTransactions: [[Transaction]] = []
         var currentWeek: [Transaction] = []
         var currentWeekStart: Date? = nil
-
+        
         for transaction in transactions {
             let startOfWeek = Calendar.current.startOfWeek(
                 for: transaction.date)
@@ -95,28 +95,35 @@ struct ListTransactionView: View {
             }
             currentWeek.append(transaction)
         }
-
+        
         if !currentWeek.isEmpty {
             groupedTransactions.append(currentWeek)
         }
-
+        
         print(groupedTransactions)
-
+        
         return groupedTransactions
     }
-
+    
     private func onDelete(at indexSet: IndexSet) {
         for index in indexSet {
             let transactionToDelete = transactions[index]
             modelContext.delete(transactionToDelete)
         }
     }
-
+    
     private func onEdit() {
         print("Edit action")
     }
+    
+    private let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "d/MM/yyyy"
+            return dateFormatter
+        }()
+    
+    
 }
-
 extension Calendar {
     func startOfWeek(for date: Date) -> Date {
         return self.dateInterval(of: .weekOfYear, for: date)?.start ?? date
