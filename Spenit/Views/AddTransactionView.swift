@@ -15,14 +15,16 @@ struct AddTransactionView: View {
     @State var label: String = ""
     @State var account: AccountType = .card
     @State var date: Date = Date.now
-    @State var amount: Double = 1
+    @State var amount: Double? = nil
     @State var transactionType: TransactionType = .expense
 
     var body: some View {
         Form {
             Section {
                 HStack { TextField("Name", text: $label) }
-                HStack { TextField("Amount", value: $amount, format: .number) }
+                HStack {
+                    Text("Amount")
+                    TextField("Amount", value: $amount, format: .number) }
                 
                 DatePicker("Date", selection: $date, displayedComponents: .date)
                 
@@ -43,14 +45,25 @@ struct AddTransactionView: View {
             .toolbar(content: {
                 Button(action: {
                     save()
-                }, label: { Text("Save") }).disabled(label == "" || amount == 0)
+                }, label: { Text("Save") }).disabled(!isGoodInput)
             })
     }
     
     func save() {
-        let newTransaction = Transaction(label: label, account: account, amount: amount, date: date, type: transactionType)
-        modelContext.insert(newTransaction)
-        
-        dismiss()
+        if let amount {
+            if (!amount.isNaN && !label.isEmpty) {
+                let newTransaction = Transaction(label: label, account: account, amount: amount, date: date, type: transactionType)
+                modelContext.insert(newTransaction)
+                dismiss()
+            }
+        }
+    }
+    
+    private var isGoodInput: Bool {
+        if let amount {
+            if !amount.isNaN && !label.isEmpty { return true }
+            return false
+        }
+        return false
     }
 }

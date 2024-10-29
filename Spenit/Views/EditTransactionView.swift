@@ -19,7 +19,9 @@ struct EditTransactionView: View {
         Form {
             Section {
                 HStack { TextField("Name", text: $transaction.label) }
-                HStack { TextField("Amount", value: $transaction.amount, format: .number) }
+                HStack {
+                    Text("Amount")
+                    TextField("Amount", value: $transaction.amount, format: .number) }
                 
                 DatePicker("Date", selection: $transaction.date, displayedComponents: .date)
                 
@@ -53,5 +55,4 @@ struct EditTransactionView: View {
         }
         dismiss()
     }
-    
 }

@@ -11,14 +11,18 @@ struct ListTransactionView: View {
     @Query var transactions: [Transaction]
     @State var keyWord: String = ""
     @Environment(\.modelContext) var modelContext
+    @State private var transactionSheetItem: Transaction? = nil
 
     var body: some View {
         List {
             ForEach(transactions, id: \.self) { transaction in
-                HStack {
-                    NavigationLink(
-                        destination: TransactionView(transaction: transaction)
-                    ) {
+                @State var showSheet: Bool = false
+                Button(action: {
+                    transactionSheetItem = transaction
+                    showSheet.toggle()
+                }) {
+                    HStack {
+
                         HStack {
                             VStack(alignment: .leading) {
                                 HStack {
@@ -29,7 +33,6 @@ struct ListTransactionView: View {
                                 Text(transaction.date.formatted())
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
-
                             }
 
                             Spacer()
@@ -51,9 +54,12 @@ struct ListTransactionView: View {
                             }
 
                         }
-                    }
 
-                }
+                    }
+                }.sheet(item: $transactionSheetItem) { item in
+                    TransactionView(transaction: item)
+                }.buttonStyle(PlainButtonStyle())
+
                 .swipeActions(edge: .leading, allowsFullSwipe: false) {
                     NavigationLink {
                         EditTransactionView(transaction: transaction)
