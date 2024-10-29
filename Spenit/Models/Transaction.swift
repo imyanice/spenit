@@ -30,7 +30,7 @@ final class Transaction {
         self.label = label
         self.account = account
         self.amount = amount
-        self.date = Date.now
+        self.date = date
         self.type = type
     }
 }

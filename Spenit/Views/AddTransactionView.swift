@@ -61,7 +61,7 @@ struct AddTransactionView: View {
     
     private var isGoodInput: Bool {
         if let amount {
-            if !amount.isNaN && !label.isEmpty { return true }
+            if !amount.isNaN && !label.isEmpty && amount > 0 { return true }
             return false
         }
         return false

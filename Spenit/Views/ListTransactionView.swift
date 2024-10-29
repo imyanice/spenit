@@ -15,7 +15,7 @@ struct ListTransactionView: View {
 
     var body: some View {
         List {
-            ForEach(transactions, id: \.self) { transaction in
+            ForEach(transactions.sorted {$0.date > $1.date}, id: \.self) { transaction in
                 @State var showSheet: Bool = false
                 Button(action: {
                     transactionSheetItem = transaction

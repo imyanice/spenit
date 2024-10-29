@@ -43,7 +43,7 @@ struct EditTransactionView: View {
             .toolbar(content: {
                 Button(action: {
                     save()
-                }, label: { Text("Save") }).disabled(transaction.label == "" || transaction.amount == 0)
+                }, label: { Text("Save") }).disabled(transaction.label == "" || transaction.amount <= 0)
             })
     }
     
