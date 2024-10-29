@@ -26,6 +26,7 @@ final class Transaction {
     var date: Date
     var type: TransactionType
     
+    
     init(label: String, account: AccountType, amount: Double, date: Date = .init(), type: TransactionType) {
         self.label = label
         self.account = account

@@ -10,7 +10,6 @@ import SwiftUI
 
 struct AddTransactionView: View {
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.dismiss) private var dismiss
     
     @State var label: String = ""
     @State var account: AccountType = .card
@@ -19,33 +18,46 @@ struct AddTransactionView: View {
     @State var transactionType: TransactionType = .expense
 
     var body: some View {
-        Form {
-            Section {
-                HStack { TextField("Name", text: $label) }
-                HStack {
-                    Text("Amount")
-                    TextField("Amount", value: $amount, format: .number) }
-                
-                DatePicker("Date", selection: $date, displayedComponents: .date)
-                
-                Picker("Account used", selection: $account ) {
+        List {
+            Section(header: Text("Label")) {
+                TextField("Groceries", text: $label)
+
+            }
+            Section(header: Text("Amount")) {
+
+                TextField("Amount", value: $amount, format: .number).keyboardType(.decimalPad)
+
+            }
+
+            Section(header: Text("Date")) {
+                DatePicker(
+                    "Date", selection: $date,
+                    displayedComponents: .date
+                ).datePickerStyle(.graphical)
+
+            }
+            Section(header: Text("Type")) {
+                Picker("Account used", selection: $account) {
                     ForEach(AccountType.allCases, id: \.self) { type in
-                        Text(type.rawValue).tag(type)}
-                }.pickerStyle(.menu)
-                
+                        Text(type.rawValue).tag(type)
+                    }
+                }.pickerStyle(.palette)
+
                 Picker("", selection: $transactionType) {
                     ForEach(TransactionType.allCases, id: \.self) {
                         type in Text(type.rawValue).tag(type)
                     }
                 }.pickerStyle(.palette)
             }
-        }
-        .navigationTitle("Add a transaction")
+        }.listSectionSpacing(.compact)
+            .navigationTitle("Add a transaction")
             .toolbarTitleDisplayMode(.inline)
             .toolbar(content: {
-                Button(action: {
-                    save()
-                }, label: { Text("Save") }).disabled(!isGoodInput)
+                Button(
+                    action: {
+                        save()
+                    }, label: { Text("Save") }
+                ).disabled(label == "" || amount ?? -1 <= 0)
             })
     }
     
@@ -54,9 +66,16 @@ struct AddTransactionView: View {
             if (!amount.isNaN && !label.isEmpty) {
                 let newTransaction = Transaction(label: label, account: account, amount: amount, date: date, type: transactionType)
                 modelContext.insert(newTransaction)
-                dismiss()
+                reset()
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }
         }
+    }
+    
+    func reset() {
+        label = ""
+        amount = nil
+        date = Date.now
     }
     
     private var isGoodInput: Bool {

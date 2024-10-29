@@ -26,10 +26,31 @@ struct SpenitApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                ListTransactionView()
-            }
+            Text("")
+            TabView() {
+                        NavigationStack() {
+                            AddTransactionView()
+                                .navigationTitle("Add")
+                        }
+                        .tabItem {
+                            Text("Add")
+                            Image(systemName: "plus.app")
+                                .renderingMode(.template)
+                        }
+                        .tag(0)
+                        
+                        NavigationStack() {
+                            ListTransactionView()
+                                .navigationTitle("List")
+                        }
+                        .tabItem {
+                            Label("List", systemImage: "list.bullet")
+                        }
+                        .tag(1)
+
+                    }
         }
         .modelContainer(sharedModelContainer)
     }
+    
 }
