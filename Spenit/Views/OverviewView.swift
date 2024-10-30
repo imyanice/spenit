@@ -22,7 +22,7 @@ struct OverviewView: View {
                     VStack {
                         Text(incomesAmountCard - expensesAmountCard, format: .currency(code: "EUR")).font(.headline).foregroundStyle(incomesAmountCard - expensesAmountCard < 0 ? .red : .primary)
                         Text("Available")
-                        Text("Available")
+
                     }
                     Spacer()
                     VStack {

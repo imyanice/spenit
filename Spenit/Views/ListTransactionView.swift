@@ -7,7 +7,7 @@ struct ListTransactionView: View {
 
     var body: some View {
         let groupedTransactions = groupTransactionsByDay(transactions: transactions.sorted { $0.date > $1.date })
-
+        
         List {
             ForEach(groupedTransactions, id: \.self) { dayTransactions in
                 Section(
@@ -38,15 +38,6 @@ struct ListTransactionView: View {
             }
         )
         .navigationTitle("Transactions")
-        .toolbar {
-            ToolbarItem {
-                NavigationLink {
-                    AddTransactionView()
-                } label: {
-                    Image(systemName: "plus")
-                }
-            }
-        }
     }
 
     private func transactionLabel(transaction: Transaction) -> some View {
