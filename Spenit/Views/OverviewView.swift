@@ -20,7 +20,8 @@ struct OverviewView: View {
             Section(header: Text(AccountType.card.rawValue)) {
                 HStack {
                     VStack {
-                        Text(incomesAmountCard - expensesAmountCard, format: .currency(code: "EUR")).font(.headline)
+                        Text(incomesAmountCard - expensesAmountCard, format: .currency(code: "EUR")).font(.headline).foregroundStyle(incomesAmountCard - expensesAmountCard < 0 ? .red : .primary)
+                        Text("Available")
                         Text("Available")
                     }
                     Spacer()
@@ -38,7 +39,7 @@ struct OverviewView: View {
             Section(header: Text(AccountType.cash.rawValue)) {
                 HStack {
                     VStack {
-                        Text(incomesAmountCash - expensesAmountCash, format: .currency(code: "EUR")).font(.headline)
+                        Text(incomesAmountCash - expensesAmountCash, format: .currency(code: "EUR")).font(.headline).foregroundStyle(incomesAmountCash - expensesAmountCash < 0 ? .red : .primary)
                         Text("Available")
                     }
                     Spacer()
