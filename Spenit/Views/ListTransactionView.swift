@@ -7,13 +7,14 @@ struct ListTransactionView: View {
     
     var body: some View {
         
-        let groupedTransactions = groupTransactionsByWeek(
+        let groupedTransactions = groupTransactionsByDay(
             transactions: transactions.sorted { $0.date > $1.date })
         List {
             ForEach(groupedTransactions.indices, id: \.self) { index in
-                let weekTransactions = groupedTransactions[index]
-                Section() {
-                    ForEach(weekTransactions, id: \.self) { transaction in
+                let dayTransactions = groupedTransactions[index]
+     
+                Section(header: Text(dateFormatter.string(from: dayTransactions[0].date))) {
+                    ForEach(dayTransactions, id: \.self) { transaction in
                         @State var showSheet: Bool = false
                         
                         NavigationLink{ EditTransactionView(transaction: transaction)} label: {
@@ -24,9 +25,6 @@ struct ListTransactionView: View {
                                         Text(transaction.label)
                                             .font(.headline)
                                     }
-                                    Text(dateFormatter.string(from: transaction.date))
-                                        .font(.subheadline)
-                                        .foregroundStyle(.secondary)
                                 }
                                 
                                 Spacer()
@@ -76,32 +74,26 @@ struct ListTransactionView: View {
         })
     }
     
-    private func groupTransactionsByWeek(transactions: [Transaction])
-    -> [[Transaction]]
-    {
+    private func groupTransactionsByDay(transactions: [Transaction]) -> [[Transaction]] {
         var groupedTransactions: [[Transaction]] = []
-        var currentWeek: [Transaction] = []
-        var currentWeekStart: Date? = nil
+        var currentDay: [Transaction] = []
+        var currentDayStart: Date? = nil
         
         for transaction in transactions {
-            let startOfWeek = Calendar.current.startOfWeek(
-                for: transaction.date)
-            if currentWeekStart == nil || startOfWeek != currentWeekStart {
-                if !currentWeek.isEmpty {
-                    groupedTransactions.append(currentWeek)
+            let startOfDay = Calendar.current.startOfDay(for: transaction.date)
+            if currentDayStart == nil || startOfDay != currentDayStart {
+                if !currentDay.isEmpty {
+                    groupedTransactions.append(currentDay)
                 }
-                currentWeek = []
-                currentWeekStart = startOfWeek
+                currentDay = []
+                currentDayStart = startOfDay
             }
-            currentWeek.append(transaction)
+            currentDay.append(transaction)
         }
         
-        if !currentWeek.isEmpty {
-            groupedTransactions.append(currentWeek)
-        }
-        
-        print(groupedTransactions)
-        
+        if !currentDay.isEmpty {
+            groupedTransactions.append(currentDay)
+        };
         return groupedTransactions
     }
     
@@ -118,9 +110,11 @@ struct ListTransactionView: View {
     
     private let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "d/MM/yyyy"
-            return dateFormatter
-        }()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .none
+        dateFormatter.locale = Locale(identifier: "fr_FR")
+        return dateFormatter
+    }()
     
     
 }
